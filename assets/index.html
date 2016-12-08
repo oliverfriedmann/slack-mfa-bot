@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<p id="result">
+	</p>
+	<img src="" id="image" style="display:none" />
+	<input type="file" id="file" />
+	<script src="qcode-decoder.min.js"></script>
+	<script>
+		var result = document.getElementById("result");
+		var img = document.getElementById("image");
+		var file = document.getElementById("file");
+		file.onchange = function() {
+			var reader = new FileReader();
+			reader.addEventListener("load", function() {
+				img.src = reader.result;
+				var qr = new QCodeDecoder();
+				qr.decodeFromImage(img, function (err, value) {
+					if (err)
+						throw err;
+					result.innerHTML = value;
+				});
+			}, false);
+			reader.readAsDataURL(file.files[0]);
+		};
+	</script>
+</body>
+</html>
