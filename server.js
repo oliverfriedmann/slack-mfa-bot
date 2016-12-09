@@ -312,13 +312,23 @@ var Controller = {
 };
 
 
-
-bot.on("message", function (message) {
+var messageHandler = function (message) {
 	if (message.type === 'message') {
 		var route = routeParser.parse(message.text);
-		if (Controller[route.name])
+		if (route && Controller[route.name])
 			Controller[route.name].call(Controller, Helpers.userById(message.user), route.args);
 	}
+};
+
+bot.on("message", messageHandler);
+
+bot.on('close', function(data){
+    console.log("Connection closed... Reconnecting.")
+    bot = Bot({
+    	token: Config.token,
+    	name: Config.name
+    });
+    bot.on("message", messageHandler);
 });
 
 
