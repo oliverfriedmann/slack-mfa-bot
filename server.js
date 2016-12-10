@@ -15,6 +15,7 @@ opt = Getopt.create([
     ["", "crypt=CRYPT", "crypt password"],
     ["", "mongo=MONGO", "mongodb url"],
     ["", "botname=BOTNAME", "bot name"],
+    ["", "quitafterminutes=QUITAFTERMINUES", "automatically quit after minutes"]
 ]).bindHelp().parseSystem().options;
 
 var LocalConfig = {};
@@ -27,7 +28,8 @@ var Config = {
 	mongodb: process.env.MONGODB_URI || opt.mongo || LocalConfig.mongodb,
 	name: process.env.BOTNAME || opt.botname || 'mfa-bot',
 	next_admin_minutes: process.env.NEXT_ADMIN_MINUTES || 30,
-	port: process.env.PORT || 3000
+	port: process.env.PORT || 3000,
+	quit_after_minutes: opt.quitafterminutes || null
 };
 
 
@@ -322,16 +324,6 @@ var messageHandler = function (message) {
 
 bot.on("message", messageHandler);
 
-bot.on('close', function(data){
-    console.log("Connection closed... Reconnecting.")
-    bot = Bot({
-    	token: Config.token,
-    	name: Config.name
-    });
-    bot.on("message", messageHandler);
-});
-
-
 var Express = require("express");
 
 var express = Express();
@@ -339,3 +331,9 @@ express.use("", Express["static"](__dirname + "/assets"));
 express.listen(Config.port, function () {
 	console.log("Listening on", Config.port);
 });
+
+if (Config.quit_after_minutes) {
+	setTimeout(function () {
+		process.exit(0);
+	}, 1000 * 60 * parseInt(Config.quit_after_minutes));
+}

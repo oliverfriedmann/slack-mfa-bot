@@ -1,7 +1,7 @@
 {
 	"name": "slack-mfa-bot",
 	"description": "Slack MFA Bot",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"author": "Oliver Friedmann",
 	"repository": "https://github.com/oliverfriedmann/slack-mfa-bot",
 	"license": "Apache-2.0",
