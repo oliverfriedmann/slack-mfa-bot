@@ -1,6 +1,5 @@
 Scoped = require("betajs-scoped/dist/scoped.js");
 var BetaJS = require('betajs/dist/beta-noscoped.js');
-require('betajs-data/dist/betajs-data-noscoped.js');
 require('betajs-server/dist/betajs-server-noscoped.js');
 Scoped.binding("betajs", "global:BetaJS");
 var Bot = require('slackbots');
@@ -81,8 +80,10 @@ var Helpers = {
 	},
 	
 	encryptKey: function (decrypted_key) {
-		decrypted_key = decrypted_key.split("=");
-		decrypted_key = decrypted_key.pop();
+		if (decrypted_key.indexOf("secret="))
+			decrypted_key = decrypted_key.substring(decrypted_key.indexOf("secret=") + "secret=".length);
+		if (decrypted_key.indexOf("&"))
+			decrypted_key = decrypted_key.substring(0, decrypted_key.indexOf("&"));
 		var cipher = Crypto.createCipher('aes-256-ctr', Config.crypt_password)
 		var crypted = cipher.update(decrypted_key, 'utf8', "hex");
 		crypted += cipher.final('hex');
